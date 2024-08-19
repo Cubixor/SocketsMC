@@ -1,4 +1,4 @@
-package me.cubixor.socketsmc.bungee;
+package me.cubixor.socketsmc.proxy;
 
 
 import me.cubixor.socketsmc.common.SocketConnection;
@@ -42,7 +42,7 @@ public class SocketServerSender {
                     out.reset();
 
                     if (socketServer.isDebug()) {
-                        socketServer.getLogger().log(Level.INFO, () -> "Sent packet: " + packet.getClassName() + " to server: " + server + "\n" + packet);
+                        socketServer.getLogger().log(Level.INFO, "Sent packet: " + packet.getClassName() + " to server: " + server + "\n" + packet);
                     }
                 }
 

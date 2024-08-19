@@ -1,9 +1,7 @@
-package me.cubixor.socketsmc.bungee;
+package me.cubixor.socketsmc.proxy;
 
 
-import me.cubixor.socketsmc.bungee.event.PacketReceivedEventBungee;
 import me.cubixor.socketsmc.common.packets.Packet;
-import net.md_5.bungee.api.ProxyServer;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -26,10 +24,11 @@ public class SocketServerReceiver {
 
                 if (socketServer.isDebug()) {
                     java.lang.String className = packet.getClass().getName();
-                    socketServer.getLogger().log(Level.INFO, () -> "Packet received: " + className + " from server: " + server + "\n" + packet);
+                    socketServer.getLogger().log(Level.INFO, "Packet received: " + className + " from server: " + server + "\n" + packet);
                 }
 
-                ProxyServer.getInstance().getPluginManager().callEvent(new PacketReceivedEventBungee(packet, server));
+                EventFactory eventFactory = socketServer.getProxy().getEventFactory();
+                socketServer.getProxy().fireEvent(eventFactory.createPacketReceivedEvent(packet, server));
 
             } catch (ClassNotFoundException |
                      InvalidClassException |

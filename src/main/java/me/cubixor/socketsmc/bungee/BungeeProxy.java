@@ -1,5 +1,9 @@
-package me.cubixor.socketsmc.proxy;
+package me.cubixor.socketsmc.bungee;
 
+import me.cubixor.socketsmc.proxy.CommonLogger;
+import me.cubixor.socketsmc.proxy.EventFactory;
+import me.cubixor.socketsmc.proxy.Proxy;
+import me.cubixor.socketsmc.proxy.ProxyEvent;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Event;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -10,6 +14,16 @@ public class BungeeProxy implements Proxy {
 
     public BungeeProxy(Plugin plugin) {
         this.plugin = plugin;
+    }
+
+    @Override
+    public CommonLogger getLogger() {
+        return new JavaLogger(plugin.getLogger());
+    }
+
+    @Override
+    public EventFactory getEventFactory() {
+        return new BungeeEventFactory();
     }
 
     @Override

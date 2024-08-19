@@ -1,12 +1,13 @@
-package me.cubixor.socketsmc.bungee.event;
+package me.cubixor.socketsmc.bungee.events;
 
 import me.cubixor.socketsmc.common.packets.Packet;
+import me.cubixor.socketsmc.proxy.events.ProxyPacketReceivedEvent;
 import net.md_5.bungee.api.plugin.Event;
 
-public class PacketReceivedEventBungee extends Event {
+public class PacketReceivedEventBungee extends Event implements ProxyPacketReceivedEvent {
 
-    private final Packet packet;
-    private final String server;
+    final Packet packet;
+    final String server;
 
     public PacketReceivedEventBungee(Packet packet, String server) {
         this.packet = packet;

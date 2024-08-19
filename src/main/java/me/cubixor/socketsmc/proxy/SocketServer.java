@@ -1,11 +1,7 @@
-package me.cubixor.socketsmc.bungee;
+package me.cubixor.socketsmc.proxy;
 
 
-import me.cubixor.socketsmc.bungee.event.SocketConnectedEventBungee;
-import me.cubixor.socketsmc.bungee.event.SocketDisconnectedEventBungee;
 import me.cubixor.socketsmc.common.SocketConnection;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.plugin.Plugin;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,12 +11,11 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SocketServer {
 
-    private final Plugin plugin;
-    private final Logger logger;
+    private final Proxy proxy;
+    private final CommonLogger logger;
     private final boolean debug;
 
     private final Map<String, SocketConnection> spigotSocket = new HashMap<>();
@@ -28,9 +23,9 @@ public class SocketServer {
     private final SocketServerReceiver receiver;
     private ServerSocket serverSocket;
 
-    public SocketServer(Plugin plugin, int port, boolean debug) {
-        this.plugin = plugin;
-        this.logger = plugin.getLogger();
+    public SocketServer(Proxy proxy, int port, boolean debug) {
+        this.proxy = proxy;
+        this.logger = proxy.getLogger();
         this.debug = debug;
 
         sender = new SocketServerSender(this);
@@ -40,11 +35,11 @@ public class SocketServer {
     }
 
     private void serverSetup(int port) {
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
+        proxy.runAsync(() -> {
             try {
                 serverSocket = new ServerSocket(port);
 
-                ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> sender.send(serverSocket));
+                proxy.runAsync(() -> sender.send(serverSocket));
 
                 logger.log(Level.INFO, "§aSuccessfully started the socket server!");
 
@@ -61,10 +56,10 @@ public class SocketServer {
         try {
             Socket socket = serverSocket.accept();
             if (debug) {
-                logger.log(Level.INFO, "Accepted connection from client {0}", socket.getInetAddress());
+                logger.log(Level.INFO, "Accepted connection from client " + socket.getInetAddress());
             }
 
-            ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> acceptConnection(serverSocket));
+            proxy.runAsync(() -> acceptConnection(serverSocket));
 
             clientSetup(socket);
         } catch (IOException e) {
@@ -82,9 +77,9 @@ public class SocketServer {
         SocketConnection socketConnection = new SocketConnection(socket, objectOutputStream);
         spigotSocket.put(server, socketConnection);
 
-        ProxyServer.getInstance().getPluginManager().callEvent(new SocketConnectedEventBungee(server));
+        proxy.fireEvent(proxy.getEventFactory().createSocketConnectedEvent(server));
 
-        logger.log(Level.INFO, "§aSuccessfully connected to the {0} server!", server);
+        logger.log(Level.INFO, "§aSuccessfully connected to the " + server + " server!");
 
         serverReceive(server, objectInputStream);
     }
@@ -93,10 +88,10 @@ public class SocketServer {
         try {
             receiver.serverMessageReader(serverSocket, server, in);
         } catch (IOException e) {
-            logger.log(Level.WARNING, "§eDisconnected from the {0} server!", server);
+            logger.log(Level.WARNING, "§eDisconnected from the " + server + " server!");
 
             spigotSocket.remove(server);
-            ProxyServer.getInstance().getPluginManager().callEvent(new SocketDisconnectedEventBungee(server));
+            proxy.fireEvent(proxy.getEventFactory().createSocketDisconnectedEvent(server));
 
             if (debug) {
                 logger.log(Level.WARNING, "Disconnected from the client", e);
@@ -117,7 +112,7 @@ public class SocketServer {
         }
     }
 
-    public Logger getLogger() {
+    public CommonLogger getLogger() {
         return logger;
     }
 
@@ -135,5 +130,9 @@ public class SocketServer {
 
     public SocketServerSender getSender() {
         return sender;
+    }
+
+    public Proxy getProxy() {
+        return proxy;
     }
 }
