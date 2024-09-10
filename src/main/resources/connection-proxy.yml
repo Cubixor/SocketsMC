@@ -1,1 +1,13 @@
+# Socket configuration file - bungeecord/velocity side (connection-proxy.yml)
+#
+# This file contains all settings related to connection with spigot server
+
+
+# Socket server port
+#
+# It can be any free port (not being used by any other service),
+# that your socket server will use for communication between spigot servers and bungeecord/velocity.
+#
+# Remember to change the port in every spigot server connection.yml file to the one set below.
+# WARNING! This is NOT your bungeecord server port, but socket server port.
 socket-port: 3000

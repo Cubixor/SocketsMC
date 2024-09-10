@@ -1,4 +1,20 @@
+# Socket configuration file - spigot side (connection.yml)
+#
+# This file contains all settings related to bungeecord/velocity connection.
+#
+# You need to configure it only if you are using bungee mode, otherwise ignore it.
+
 bungee-socket:
+
+  # Server name - name of THIS server that is used in the bungeecord config.
+  # In other words - name of this serer that you use when teleporting to it using /server command.
+  # WARNING! It's really important to use the same name here as in the bungecord config - otherwise plugin won't work.
+  # So if this spigot server is named "srv1" in your bungeecord config, leave this option set to "srv1".
   server-name: "srv1"
+
+  # Bungeecord server hostname, if your spigot and bungeecord server are on the same machine leave it set to "localhost".
   host: "localhost"
+
+  # Bungeecord SOCKET SERVER port, set it to the same value as in the connection-bungee.yml in your bungeecord server.
+  # WARNING! THIS IS NOT YOUR BUNGEECORD SERVER'S PORT, it's your socket server's port that can be changed in the file mentioned above.
   port: 3000
